@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="kk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Білім Майданы — 3D сайыс</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="stage">
+        <canvas id="scene"></canvas>
+        <div class="hud">
+          <div class="pcard p0">
+            <div class="pname" id="name0"></div>
+            <div class="hprow"><div class="hpbar"><i id="hp0"></i></div><b id="hpnum0">100</b></div>
+            <div class="pips" id="pips0"></div>
+          </div>
+          <div class="vs"><b>VS</b><span id="round">РАУНД 1 / 5</span></div>
+          <div class="pcard p1">
+            <div class="pname" id="name1"></div>
+            <div class="hprow"><b id="hpnum1">100</b><div class="hpbar"><i id="hp1"></i></div></div>
+            <div class="pips" id="pips1"></div>
+          </div>
+        </div>
+        <div id="fx"></div>
+        <div id="banner"></div>
+        <button id="mute" title="Дыбыс">🔊</button>
+      </section>
+      <section id="panels"></section>
+
+      <div id="menu" class="overlay">
+        <div class="card">
+          <h1>Білім Майданы</h1>
+          <p class="sub">Екі оқушыға арналған 3D білім сайысы</p>
+          <div class="names">
+            <label class="p0">1-ойыншы<input id="in0" maxlength="16" value="Әлішер" /></label>
+            <label class="p1">2-ойыншы<input id="in1" maxlength="16" value="Дильназ" /></label>
+          </div>
+          <div class="opts-row">
+            <label>Раунд саны
+              <select id="rounds"><option>3</option><option selected>5</option><option>7</option><option>10</option></select>
+            </label>
+            <label>Уақыт (сек)
+              <select id="secs"><option>15</option><option>20</option><option selected>30</option><option>45</option></select>
+            </label>
+          </div>
+          <details>
+            <summary>Сұрақтарды өзгерту</summary>
+            <p class="hint">Әр жолға бір сұрақ: <code>Сұрақ | Дұрыс жауап | Қате | Қате | Қате</code></p>
+            <textarea id="qtext" rows="8" spellcheck="false"></textarea>
+            <button id="qreset" class="ghost">Әдепкі сұрақтар</button>
+          </details>
+          <button id="start" class="big">БАСТАУ</button>
+          <p class="hint">1-ойыншы: <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> &nbsp;·&nbsp; 2-ойыншы: <kbd>7</kbd><kbd>8</kbd><kbd>9</kbd><kbd>0</kbd> &nbsp;·&nbsp; немесе тінтуірмен басыңыз</p>
+          <p class="hint">Дұрыс жауап — қарсыласқа сиқырлы соққы! Қатарынан 3 дұрыс жауап — КОМБО.</p>
+        </div>
+      </div>
+
+      <div id="result" class="overlay hidden">
+        <div class="card">
+          <div class="crown">🏆</div>
+          <h1 id="winner"></h1>
+          <div id="stats"></div>
+          <div class="btns">
+            <button id="again" class="big">ҚАЙТА ОЙНАУ</button>
+            <button id="tomenu" class="ghost">Мәзір</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
