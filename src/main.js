@@ -14,8 +14,9 @@ let muted = false;
 const play = (name) => !muted && sfx[name]();
 
 const game = {
-  phase: 'menu', // menu | question | resolve | over
+  phase: 'menu', // menu | question | resolve | ko | over
   round: 0,
+  pendingHits: 0,
   rounds: 5,
   secs: 30,
   timeLeft: 0,
@@ -60,6 +61,7 @@ function startGame() {
     hp: 100, combo: 0, correct: 0, answered: false, q: null, history: [],
   }));
   game.round = 0;
+  game.pendingHits = 0;
   clearTimeout(game.timer);
   arena.reset();
 
@@ -139,7 +141,12 @@ function answer(i, k) {
     const dmg = p.combo >= 3 ? COMBO_DMG : BASE_DMG;
     if (p.combo >= 2) floatText(i, `КОМБО x${p.combo}`, 'combo', 3.6);
     setTimeout(() => play('cast'), 100);
-    arena.attack(i, () => applyDamage(1 - i, dmg), p.combo >= 3 ? 1.5 : 1);
+    game.pendingHits++;
+    arena.attack(i, () => {
+      game.pendingHits--;
+      applyDamage(1 - i, dmg);
+      if (game.pendingHits === 0 && game.phase === 'resolve') scheduleAdvance(1500);
+    }, p.combo >= 3 ? 1.5 : 1);
   } else {
     p.combo = 0;
     p.history.push('bad');
@@ -162,14 +169,20 @@ function timeout() {
   endRound();
 }
 
+// Advance only once every attack of the round has landed: on slow PCs the
+// animation can outlast a fixed timer and the final hit's damage would be lost.
 function endRound() {
   game.phase = 'resolve';
+  if (game.pendingHits === 0) scheduleAdvance(2400);
+}
+
+function scheduleAdvance(delay) {
   clearTimeout(game.timer);
   game.timer = setTimeout(() => {
-    if (game.phase === 'over') return;
+    if (game.phase !== 'resolve') return;
     if (game.round >= game.rounds) finish();
     else nextRound();
-  }, 2400);
+  }, delay);
 }
 
 function applyDamage(i, dmg) {
@@ -181,7 +194,7 @@ function applyDamage(i, dmg) {
   updateHud();
   if (p.hp === 0) {
     arena.ko(i);
-    game.phase = 'resolve';
+    game.phase = 'ko';
     clearTimeout(game.timer);
     game.timer = setTimeout(finish, 1800);
     setTimeout(() => banner('НОКАУТ!'), 400);

@@ -9,5 +9,5 @@
 ```bash
 npm install
 npm run dev      # әзірлеу
-npm run build    # dist/ — кез келген статикалық хостингке (GitHub Pages)
+npm run build    # dist/index.html — бүкіл ойын бір файлда, интернетсіз ашылады
 ```

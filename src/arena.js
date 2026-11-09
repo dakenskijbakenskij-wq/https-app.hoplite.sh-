@@ -437,12 +437,16 @@ export function createArena(canvas) {
 
   const tmp = new THREE.Vector3();
 
+  let generation = 0; // bumped on reset so bolts from a previous match never land
+
   function attack(from, onImpact, power = 1) {
     const a = fighters[from];
     const d = fighters[1 - from];
+    const gen = generation;
     a.lunge = 1;
     a.cast = 1;
     setTimeout(() => {
+      if (gen !== generation) return;
       const start = a.staffTip.getWorldPosition(new THREE.Vector3());
       const end = d.outer.position.clone().add(new THREE.Vector3(0, from === 0 ? 1.6 : 1.3, 0.2));
       const orb = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: a.color, blending: THREE.AdditiveBlending, depthWrite: false }));
@@ -460,6 +464,9 @@ export function createArena(canvas) {
   function hit(idx) { fighters[idx].hit = 1; }
   function ko(idx) { fighters[idx].koing = true; }
   function reset() {
+    generation++;
+    for (const b of bolts) scene.remove(b.orb);
+    bolts.length = 0;
     for (const f of fighters) Object.assign(f, { lunge: 0, hit: 0, ko: 0, koing: false, cast: 0 });
   }
 
